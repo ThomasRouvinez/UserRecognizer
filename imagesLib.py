@@ -28,6 +28,7 @@ class imagesLib:
 	presence = []
 	widthArray = []
 	heightArray = []
+	CoG = []
 	
 	# --------------------------------------------------------
 	# Image import/export.
@@ -83,13 +84,13 @@ class imagesLib:
 				
 				# Perform actions on each digit.
 				img.save(folderName+ '/' + str(x) + str(y) + '.png', 'png')
-				self.extractPresence(img)
+				self.extractPresence_CoG(img)
 				self.extractWidthHeight(img)
 				
 			verticalOffset = verticalOffset + size
 			
 			# Compile results for all 10 version of each digit.
-			self.compilePresence()
+			self.compilePresence_CoG()
 			self.compileWidthHeight()
 			
 	# --------------------------------------------------------
@@ -125,31 +126,37 @@ class imagesLib:
 		self.HeightArray = []
 		
 	# Fetches and stores presence for each number.
-	def extractPresence(self, image):
+	def extractPresence_CoG(self, image):
 		count = 0
+		horizontalSum = 0
+		verticalSum = 0
+		
 		(width, height) = image.size
 		
+		# Count number of pixel under RGB(50,50,50).
 		for i in range(width):
 			for j in range(height):
 				if((image.getpixel((i,j)))[0] < 50):
 					count += 1
+					horizontalSum += i
+					verticalSum += j
 					
 		percentage = (count * 100) / (width * height)			
 		self.presence.append(percentage)
 		
-	# Compute actual presence feature.
-	def compilePresence(self):
-		self.vector.presence.append(np.mean(self.presence))
-		self.presence = []
+		self.CoG.append(((horizontalSum / count), (verticalSum / count)))
 		
-	# Fetches and stores naive Center-Of-Gravity for each number.
-	def extractNaiveCOG(self, image):
-		(width, height) = image.size
+	# Compute actual presence feature.
+	def compilePresence_CoG(self):
+		self.vector.presence.append(np.mean(self.presence))
+		self.vector.CoG.append(np.mean(self.CoG))
+		self.presence = []
+		self.CoG = []
 
 	# Compiles features for display.
 	def displayFeatures(self):
 		print '\n\n>','=' * 110
-		print '\n> Feature Vector.'
+		print '\n> FEATURES VECTOR.'
 		print '\n>','=' * 110
 		
 		print '\n\nPresence:\t'
@@ -163,5 +170,9 @@ class imagesLib:
 		print '\n\nMean height:\t'
 		for value in self.vector.height:
 			print ' {0:0.3f} |'.format(value),
+			
+		print '\n\nCoG:\t'
+		for value in self.vector.CoG:
+			print ' %s |' % value,
 			
 		print '\n\n>','=' * 110, '\n'

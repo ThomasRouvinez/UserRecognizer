@@ -12,4 +12,4 @@ class featureVector:
 	presence = []
 	width = []
 	height = []
-	NaiveCOG = []
+	CoG = []
