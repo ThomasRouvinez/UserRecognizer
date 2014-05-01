@@ -29,6 +29,8 @@ class imagesLib:
 	widthArray = []
 	heightArray = []
 	CoG = []
+	horizontalSplit = []
+	verticalSplit = []
 	
 	# --------------------------------------------------------
 	# Image import/export.
@@ -89,12 +91,14 @@ class imagesLib:
 				self.extractPresence_CoG(img)
 				self.extractWidthHeight(img)
 				self.extractHorizontalSplit(img)
+				self.extractVerticalSplit(img)
 				
 			verticalOffset = verticalOffset + size
 			
 			# Compile results for all 10 version of each digit.
 			self.compilePresence_CoG()
 			self.compileWidthHeight()
+			self.compileSplits()
 			
 	# --------------------------------------------------------
 	# Processing.
@@ -151,7 +155,7 @@ class imagesLib:
 	# Compute actual presence feature.
 	def compilePresence_CoG(self):
 		self.vector.presence.append(np.mean(self.presence))
-		self.vector.CoG.append(np.mean(self.CoG))
+		self.vector.CoG.append(tuple(map(np.mean, zip(*self.CoG))))
 		self.presence = []
 		self.CoG = []
 	
@@ -174,7 +178,7 @@ class imagesLib:
 		v4 = self.getCoG(image, 0, v1_x, middle, height)
 		v5 = self.getCoG(image, v1_x, width, middle, height)
 		
-		return (v0, v1, v2, v3, v4, v5)
+		self.horizontalSplit.append((v0, v1, v2, v3, v4, v5))
 		
 	def extractVerticalSplit(self, image):
 		(width, height) = image.size
@@ -194,7 +198,13 @@ class imagesLib:
 		v4 = self.getCoG(image, 0, middle, v0_y, height)
 		v5 = self.getCoG(image, middle, width, v1_y, height)
 		
-		return (v0, v1, v2, v3, v4, v5)
+		self.verticalSplit.append((v0, v1, v2, v3, v4, v5))
+		
+	def compileSplits(self):
+		self.vector.hSplit.append(tuple(map(np.mean, zip(*self.horizontalSplit))))
+		self.vector.vSplit.append(tuple(map(np.mean, zip(*self.verticalSplit))))
+		self.horizontalSplit = []
+		self.verticalSplit = []
 		
 	# --------------------------------------------------------
 	# Helpers.
@@ -237,7 +247,13 @@ class imagesLib:
 			print ' {0:0.3f} |'.format(value),
 			
 		print '\n\nCoG:\t'
-		for value in self.vector.CoG:
-			print ' %s |' % value,
+		print self.vector.CoG
 			
+		print '\n\nHorizontal Splits:\t'
+		for value in self.vector.hSplit:
+			print value,
+			
+		print '\n\nVertical Splits:\t'
+		print self.vector.vSplit
+				
 		print '\n\n>','=' * 110, '\n'

@@ -13,3 +13,5 @@ class featureVector:
 	width = []
 	height = []
 	CoG = []
+	hSplit = []
+	vSplit = []
