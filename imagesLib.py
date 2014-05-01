@@ -67,7 +67,9 @@ class imagesLib:
 			os.makedirs(folderName)
 			
 		# Splits and stores all samples (pre-processing).
+		print 'Processing digits:',
 		for x in range (0,10):
+			print '->', x,
 			for y in range (0,10):
 				# For each cell, split it.
 				box = (horizontalOffset, verticalOffset, (horizontalOffset+size), (verticalOffset+size))
@@ -86,6 +88,7 @@ class imagesLib:
 				img.save(folderName+ '/' + str(x) + str(y) + '.png', 'png')
 				self.extractPresence_CoG(img)
 				self.extractWidthHeight(img)
+				self.extractHorizontalSplit(img)
 				
 			verticalOffset = verticalOffset + size
 			
@@ -127,11 +130,10 @@ class imagesLib:
 		
 	# Fetches and stores presence for each number.
 	def extractPresence_CoG(self, image):
+		(width, height) = image.size
 		count = 0
 		horizontalSum = 0
 		verticalSum = 0
-		
-		(width, height) = image.size
 		
 		# Count number of pixel under RGB(50,50,50).
 		for i in range(width):
@@ -152,6 +154,69 @@ class imagesLib:
 		self.vector.CoG.append(np.mean(self.CoG))
 		self.presence = []
 		self.CoG = []
+	
+	# Prepares the tuple of 6 centers of gravity.
+	def extractHorizontalSplit(self, image):
+		(width, height) = image.size
+		middle = height / 2
+		
+		# Isolate v0 and v1.
+		v0 = self.getCoG(image, 0, width, 0, middle)
+		v1 = self.getCoG(image, 0, width, middle, height)
+		
+		# Get new horizontal centers of gravity.
+		(v0_x, v0_y) = v0
+		(v1_x, v1_y) = v1
+		
+		# Isolate v2, v3, v4 and v5.
+		v2 = self.getCoG(image, 0, v0_x, 0, middle)
+		v3 = self.getCoG(image, v0_x, width, 0, middle)
+		v4 = self.getCoG(image, 0, v1_x, middle, height)
+		v5 = self.getCoG(image, v1_x, width, middle, height)
+		
+		return (v0, v1, v2, v3, v4, v5)
+		
+	def extractVerticalSplit(self, image):
+		(width, height) = image.size
+		middle = width / 2
+		
+		# Isolate v0 and v1.
+		v0 = self.getCoG(image, 0, middle, 0, height)
+		v1 = self.getCoG(image, middle, width, 0, height)
+		
+		# Get new horizontal centers of gravity.
+		(v0_x, v0_y) = v0
+		(v1_x, v1_y) = v1
+		
+		# Isolate v2, v3, v4 and v5.
+		v2 = self.getCoG(image, 0, middle, 0, v0_y)
+		v3 = self.getCoG(image, middle, width, 0, v1_y)
+		v4 = self.getCoG(image, 0, middle, v0_y, height)
+		v5 = self.getCoG(image, middle, width, v1_y, height)
+		
+		return (v0, v1, v2, v3, v4, v5)
+		
+	# --------------------------------------------------------
+	# Helpers.
+	# --------------------------------------------------------
+
+	def getCoG(self, image, widthStart, widthEnd, heightStart, heightEnd):
+		count = 0
+		horizontalSum = 0
+		verticalSum = 0
+		
+		for i in range(widthStart, widthEnd):
+			for j in range(heightStart, heightEnd):
+				if((image.getpixel((i,j)))[0] < 50):
+					count += 1
+					horizontalSum += i
+					verticalSum += j
+		
+		return ((horizontalSum / count), (verticalSum / count))
+	
+	# --------------------------------------------------------
+	# Printing results.
+	# --------------------------------------------------------
 
 	# Compiles features for display.
 	def displayFeatures(self):
