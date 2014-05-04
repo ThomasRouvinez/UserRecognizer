@@ -201,8 +201,8 @@ class imagesLib:
 		self.verticalSplit.append((v0, v1, v2, v3, v4, v5))
 		
 	def compileSplits(self):
-		self.vector.hSplit.append(tuple(map(np.mean, zip(*self.horizontalSplit))))
-		self.vector.vSplit.append(tuple(map(np.mean, zip(*self.verticalSplit))))
+		self.vector.hSplit.append(self.computeMeanClusters(self.horizontalSplit))
+		self.vector.vSplit.append(self.computeMeanClusters(self.verticalSplit))
 		self.horizontalSplit = []
 		self.verticalSplit = []
 		
@@ -223,6 +223,51 @@ class imagesLib:
 					verticalSum += j
 		
 		return ((horizontalSum / count), (verticalSum / count))
+		
+	def computeMeanClusters(self, clusterList):
+		v0_x = []
+		v0_y = []
+		v1_x = []
+		v1_y = []
+		v2_x = []
+		v2_y = []
+		v3_x = []
+		v3_y = []
+		v4_x = []
+		v4_y = []
+		v5_x = []
+		v5_y = []
+		
+		for tuple in clusterList:
+			(v0, v1, v2, v3, v4, v5) = tuple
+			(a,b) = v0
+			(c,d) = v1
+			(e,f) = v2
+			(g,h) = v3
+			(i,j) = v4
+			(k,l) = v5
+			
+			# Append the the right list.
+			v0_x.append(a)
+			v0_y.append(b)
+			v1_x.append(c)
+			v1_y.append(d)
+			v2_x.append(e)
+			v2_y.append(f)
+			v3_x.append(g)
+			v3_y.append(h)
+			v4_x.append(i)
+			v4_y.append(j)
+			v5_x.append(k)
+			v5_y.append(l)
+			
+		# Reconstruct mean tuple.
+		return ((np.mean(v0_x),np.mean(v0_y)),
+				(np.mean(v1_x),np.mean(v1_y)),
+				(np.mean(v2_x),np.mean(v2_y)),
+				(np.mean(v3_x),np.mean(v3_y)),
+				(np.mean(v4_x),np.mean(v4_y)),
+				(np.mean(v5_x),np.mean(v5_y)))
 	
 	# --------------------------------------------------------
 	# Printing results.
@@ -250,8 +295,7 @@ class imagesLib:
 		print self.vector.CoG
 			
 		print '\n\nHorizontal Splits:\t'
-		for value in self.vector.hSplit:
-			print value,
+		print self.vector.hSplit
 			
 		print '\n\nVertical Splits:\t'
 		print self.vector.vSplit
