@@ -8,10 +8,8 @@
 # Description : point structure.
 # ------------------------------------------------------------
 
-class point:
-	x = None
-	y = None
-	
+class Point:
+
 	def __init__(self, dx, dy):
 		self.x = dx
 		self.y = dy

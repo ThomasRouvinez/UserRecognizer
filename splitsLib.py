@@ -9,67 +9,67 @@
 # ------------------------------------------------------------
 
 from math import atan2, degrees, pi, acos, sqrt
-from point import *
+from Point import *
 
-class splitsLib:
-	def process(self, vector):
-		print '\n>Process splits'
-		self.compileHorizontal(vector)
-		self.compileVertical(vector)
-		self.compileCombined(vector)
+class SplitsLib:
+	def process(self, user, digit):
+		self.compileHorizontal(user, digit)
+		self.compileVertical(user, digit)
+		self.compileCombined(user, digit)
 	
-	def compileHorizontal(self, vector):
+	def compileHorizontal(self, user, digit):
 		# Prepare vectors for horizontal lines.
-		hVector_x = point(0,0)
-		hVector_y = point(1,0)
+		hVector_x = Point(0,0)
+		hVector_y = Point(1,0)
 	
 		# Foreach digit in the grid.
-		for digit in vector.hSplit:
-			(h0, h1, h2, h3, h4, h5) = digit
+		for value in user.features[digit].hSplit:
+			(h0, h1, h2, h3, h4, h5) = value
 			
 			# Compute features.
-			vector.h1.append(self.getAngleVectors(h0, h1, h2, h3))
-			vector.h2.append(self.getAngleVectors(h0, h1, h4, h5))
-			vector.h3.append(self.getAngleVectors(h2, h3, h4, h5))
+			user.features[digit].h1.append(self.getAngleVectors(h0, h1, h2, h3))
+			user.features[digit].h2.append(self.getAngleVectors(h0, h1, h4, h5))
+			user.features[digit].h3.append(self.getAngleVectors(h2, h3, h4, h5))
 			
-			vector.h4.append(self.getAngleVectors(h2, h3, hVector_x, hVector_y))
-			vector.h5.append(self.getAngleVectors(h4, h5, hVector_x, hVector_y))
+			user.features[digit].h4.append(self.getAngleVectors(h2, h3, hVector_x, hVector_y))
+			user.features[digit].h5.append(self.getAngleVectors(h4, h5, hVector_x, hVector_y))
 			
-			vector.h6.append(self.getAngle(h0,h1))
-			vector.h7.append(self.getAngle(h2,h3))
-			vector.h8.append(self.getAngle(h4,h5))
+			user.features[digit].h6.append(self.getAngle(h0,h1))
+			user.features[digit].h7.append(self.getAngle(h2,h3))
+			user.features[digit].h8.append(self.getAngle(h4,h5))
 			
-	def compileVertical(self, vector):
+	def compileVertical(self, user, digit):
 		# Prepare vectors for vertical lines.
-		vVector_x = point(0,0)
-		vVector_y = point(0,1)
+		vVector_x = Point(0,0)
+		vVector_y = Point(0,1)
 	
 		# Foreach digit in the grid.
-		for digit in vector.vSplit:
-			(v0, v1, v2, v3, v4, v5) = digit
+		for value in user.features[digit].vSplit:
+			(v0, v1, v2, v3, v4, v5) = value
 			
 			# Compute feature h6.
-			vector.v1.append(self.getAngleVectors(v0, v1, v2, v3))
-			vector.v2.append(self.getAngleVectors(v0, v1, v4, v5))
-			vector.v3.append(self.getAngleVectors(v2, v3, v4, v5))
+			user.features[digit].v1.append(self.getAngleVectors(v0, v1, v2, v3))
+			user.features[digit].v2.append(self.getAngleVectors(v0, v1, v4, v5))
+			user.features[digit].v3.append(self.getAngleVectors(v2, v3, v4, v5))
 			
-			vector.v4.append(self.getAngleVectors(v2, v3, vVector_x, vVector_y))
-			vector.v5.append(self.getAngleVectors(v4, v5, vVector_x, vVector_y))
+			user.features[digit].v4.append(self.getAngleVectors(v2, v3, vVector_x, vVector_y))
+			user.features[digit].v5.append(self.getAngleVectors(v4, v5, vVector_x, vVector_y))
 			
-			vector.v6.append(self.getAngle(v0,v1))
-			vector.v7.append(self.getAngle(v2,v3))
-			vector.v8.append(self.getAngle(v4,v5))
+			user.features[digit].v6.append(self.getAngle(v0,v1))
+			user.features[digit].v7.append(self.getAngle(v2,v3))
+			user.features[digit].v8.append(self.getAngle(v4,v5))
 			
-	def compileCombined(self, vector):
+	def compileCombined(self, user, digit):
+	
 		# Foreach digit in the grid.
-		for digit in range(0,len(vector.hSplit)):
-			(h0, h1, h2, h3, h4, h5) = vector.hSplit[digit]
-			(v0, v1, v2, v3, v4, v5) = vector.vSplit[digit]
+		for x in range(0,len(user.features[0].hSplit)):
+			(h0, h1, h2, h3, h4, h5) = user.features[digit].hSplit[x]
+			(v0, v1, v2, v3, v4, v5) = user.features[digit].vSplit[x]
 			
 			# Compute feature h6.
-			vector.c1.append(self.getAngleVectors(h0, h1, v0, v1))
-			vector.c2.append(self.getAngleVectors(h2, h3, v2, v3))
-			vector.c3.append(self.getAngleVectors(h4, h5, v4, v5))
+			user.features[digit].c1.append(self.getAngleVectors(h0, h1, v0, v1))
+			user.features[digit].c2.append(self.getAngleVectors(h2, h3, v2, v3))
+			user.features[digit].c3.append(self.getAngleVectors(h4, h5, v4, v5))
 			
 	# Helper to compute the angle between two points.
 	def getAngle(self, dx, dy):
