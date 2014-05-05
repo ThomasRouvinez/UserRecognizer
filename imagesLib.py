@@ -12,6 +12,8 @@
 from PIL import Image, ImageChops
 import numpy as np 
 from featureVector import *
+from splitsLib import *
+from point import *
 import matplotlib.pyplot as plt
 import os
 
@@ -25,6 +27,7 @@ class imagesLib:
 	original = None
 	ndarr = None
 	vector = featureVector()
+	splitsProcessing = splitsLib()
 	presence = []
 	widthArray = []
 	heightArray = []
@@ -69,7 +72,7 @@ class imagesLib:
 			os.makedirs(folderName)
 			
 		# Splits and stores all samples (pre-processing).
-		print 'Processing digits:',
+		print '\n>Processing digits:',
 		for x in range (0,10):
 			print '->', x,
 			for y in range (0,10):
@@ -99,6 +102,11 @@ class imagesLib:
 			self.compilePresence_CoG()
 			self.compileWidthHeight()
 			self.compileSplits()
+			
+		# We have extracted all the information an the statistical features,
+		# we now need to process the splits tables.
+		print '\n'
+		self.splitsProcessing.process(self.vector)
 			
 	# --------------------------------------------------------
 	# Processing.
@@ -159,44 +167,49 @@ class imagesLib:
 		self.presence = []
 		self.CoG = []
 	
-	# Prepares the tuple of 6 centers of gravity.
+	# Prepares the tuple of 6 centers of gravity from horizontal splitting.
 	def extractHorizontalSplit(self, image):
 		(width, height) = image.size
 		middle = height / 2
 		
 		# Isolate v0 and v1.
-		v0 = self.getCoG(image, 0, width, 0, middle)
-		v1 = self.getCoG(image, 0, width, middle, height)
-		
-		# Get new horizontal centers of gravity.
-		(v0_x, v0_y) = v0
-		(v1_x, v1_y) = v1
+		(v0_x, v0_y) = self.getCoG(image, 0, width, 0, middle)
+		v0 = point(v0_x, v0_y)
+		(v1_x, v1_y) = self.getCoG(image, 0, width, middle, height)
+		v1 = point(v1_x, v1_y)
 		
 		# Isolate v2, v3, v4 and v5.
-		v2 = self.getCoG(image, 0, v0_x, 0, middle)
-		v3 = self.getCoG(image, v0_x, width, 0, middle)
-		v4 = self.getCoG(image, 0, v1_x, middle, height)
-		v5 = self.getCoG(image, v1_x, width, middle, height)
+		(v2_x, v2_y) = self.getCoG(image, 0, v0.x, 0, middle)
+		v2 = point(v2_x, v2_y)
+		(v3_x, v3_y) = self.getCoG(image, v0.x, width, 0, middle)
+		v3 = point(v3_x, v3_y)
+		(v4_x, v4_y) = self.getCoG(image, 0, v1.x, middle, height)
+		v4 = point(v4_x, v4_y)
+		(v5_x, v5_y) = self.getCoG(image, v1.x, width, middle, height)
+		v5 = point(v5_x, v5_y)
 		
 		self.horizontalSplit.append((v0, v1, v2, v3, v4, v5))
 		
+	# Prepares the tuple of 6 centers of gravity from vertical splitting.
 	def extractVerticalSplit(self, image):
 		(width, height) = image.size
 		middle = width / 2
 		
 		# Isolate v0 and v1.
-		v0 = self.getCoG(image, 0, middle, 0, height)
-		v1 = self.getCoG(image, middle, width, 0, height)
-		
-		# Get new horizontal centers of gravity.
-		(v0_x, v0_y) = v0
-		(v1_x, v1_y) = v1
+		(v0_x, v0_y) = self.getCoG(image, 0, middle, 0, height)
+		v0 = point(v0_x, v0_y)
+		(v1_x, v1_y) = self.getCoG(image, middle, width, 0, height)
+		v1 = point(v1_x, v1_y)
 		
 		# Isolate v2, v3, v4 and v5.
-		v2 = self.getCoG(image, 0, middle, 0, v0_y)
-		v3 = self.getCoG(image, middle, width, 0, v1_y)
-		v4 = self.getCoG(image, 0, middle, v0_y, height)
-		v5 = self.getCoG(image, middle, width, v1_y, height)
+		(v2_x, v2_y) = self.getCoG(image, 0, middle, 0, v0.y)
+		v2 = point(v2_x, v2_y)
+		(v3_x, v3_y) = self.getCoG(image, middle, width, 0, v1.y)
+		v3 = point(v3_x, v3_y)
+		(v4_x, v4_y) = self.getCoG(image, 0, middle, v0.y, height)
+		v4 = point(v4_x, v4_y)
+		(v5_x, v5_y) = self.getCoG(image, middle, width, v1.y, height)
+		v5 = point(v5_x, v5_y)
 		
 		self.verticalSplit.append((v0, v1, v2, v3, v4, v5))
 		
@@ -240,34 +253,30 @@ class imagesLib:
 		
 		for tuple in clusterList:
 			(v0, v1, v2, v3, v4, v5) = tuple
-			(a,b) = v0
-			(c,d) = v1
-			(e,f) = v2
-			(g,h) = v3
-			(i,j) = v4
-			(k,l) = v5
 			
 			# Append the the right list.
-			v0_x.append(a)
-			v0_y.append(b)
-			v1_x.append(c)
-			v1_y.append(d)
-			v2_x.append(e)
-			v2_y.append(f)
-			v3_x.append(g)
-			v3_y.append(h)
-			v4_x.append(i)
-			v4_y.append(j)
-			v5_x.append(k)
-			v5_y.append(l)
+			v0_x.append(v0.x)
+			v0_y.append(v0.y)
+			v1_x.append(v1.x)
+			v1_y.append(v1.y)
+			v2_x.append(v2.x)
+			v2_y.append(v2.y)
+			v3_x.append(v3.x)
+			v3_y.append(v3.y)
+			v4_x.append(v4.x)
+			v4_y.append(v4.y)
+			v5_x.append(v5.x)
+			v5_y.append(v5.y)
 			
-		# Reconstruct mean tuple.
-		return ((np.mean(v0_x),np.mean(v0_y)),
-				(np.mean(v1_x),np.mean(v1_y)),
-				(np.mean(v2_x),np.mean(v2_y)),
-				(np.mean(v3_x),np.mean(v3_y)),
-				(np.mean(v4_x),np.mean(v4_y)),
-				(np.mean(v5_x),np.mean(v5_y)))
+		# Reconstruct mean Tuple.
+		p0 = point(np.mean(v0_x),np.mean(v0_y))
+		p1 = point(np.mean(v1_x),np.mean(v1_y))
+		p2 = point(np.mean(v2_x),np.mean(v2_y))
+		p3= point(np.mean(v3_x),np.mean(v3_y))
+		p4 = point(np.mean(v4_x),np.mean(v4_y))
+		p5 = point(np.mean(v5_x),np.mean(v5_y))
+		
+		return (p0,p1,p2,p3,p4,p5)
 	
 	# --------------------------------------------------------
 	# Printing results.
@@ -276,8 +285,8 @@ class imagesLib:
 	# Compiles features for display.
 	def displayFeatures(self):
 		print '\n\n>','=' * 110
-		print '\n> FEATURES VECTOR.'
-		print '\n>','=' * 110
+		print '> FEATURES VECTOR.'
+		print '>','=' * 110
 		
 		print '\n\nPresence:\t'
 		for value in self.vector.presence:
@@ -293,11 +302,76 @@ class imagesLib:
 			
 		print '\n\nCoG:\t'
 		print self.vector.CoG
+		
+		print '\nH1:\t'
+		print self.vector.h1
+		
+		print '\nH2:\t'
+		print self.vector.h2
+		
+		print '\nH3:\t'
+		print self.vector.h3
+		
+		print '\nH4:\t'
+		print self.vector.h4
+		
+		print '\nH5:\t'
+		print self.vector.h5
+		
+		print '\nH6:\t'
+		print self.vector.h6
+		
+		print '\nH7:\t'
+		print self.vector.h7
+		
+		print '\nH8:\t'
+		print self.vector.h8
+		
+		print '\nV1:\t'
+		print self.vector.v1
+		
+		print '\nV2:\t'
+		print self.vector.v2
+		
+		print '\nV3:\t'
+		print self.vector.v3
+		
+		print '\nV4:\t'
+		print self.vector.v4
+		
+		print '\nV5:\t'
+		print self.vector.v5
+		
+		print '\nV6:\t'
+		print self.vector.v6
+		
+		print '\nV7:\t'
+		print self.vector.v7
+		
+		print '\nV8:\t'
+		print self.vector.v8
+		
+		print '\nC1:\t'
+		print self.vector.c1
+		
+		print '\nC2:\t'
+		print self.vector.c2
+		
+		print '\nC3:\t'
+		print self.vector.c3
 			
 		print '\n\nHorizontal Splits:\t'
-		print self.vector.hSplit
-			
+		for digit in self.vector.hSplit:
+			print '\n[',
+			for value in digit:
+				value.printPoint()
+			print ']'
+				
 		print '\n\nVertical Splits:\t'
-		print self.vector.vSplit
+		for digit in self.vector.vSplit:
+			print '\n[',
+			for value in digit:
+				value.printPoint()
+			print ']'
 				
 		print '\n\n>','=' * 110, '\n'
