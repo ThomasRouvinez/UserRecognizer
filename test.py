@@ -12,8 +12,11 @@ from imagesLib import *
 import sys
 from pylab import *
 
+# Variables.
+features = []
+extractor = imagesLib()
 
-# Create new instance of library and load the full grid.
-s = imagesLib()
+# Extract features for each user.
+features.append(extractor.features('didier_numbers.png', 'didier'))
 
-s.features('didier_numbers.png', 'didier')
+# Classification (to be done).

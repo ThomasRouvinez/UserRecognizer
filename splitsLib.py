@@ -23,7 +23,7 @@ class splitsLib:
 		hVector_x = point(0,0)
 		hVector_y = point(1,0)
 	
-		# Foreach digit.
+		# Foreach digit in the grid.
 		for digit in vector.hSplit:
 			(h0, h1, h2, h3, h4, h5) = digit
 			
@@ -44,7 +44,7 @@ class splitsLib:
 		vVector_x = point(0,0)
 		vVector_y = point(0,1)
 	
-		# Foreach digit.
+		# Foreach digit in the grid.
 		for digit in vector.vSplit:
 			(v0, v1, v2, v3, v4, v5) = digit
 			
@@ -61,7 +61,7 @@ class splitsLib:
 			vector.v8.append(self.getAngle(v4,v5))
 			
 	def compileCombined(self, vector):
-		# Foreach digit.
+		# Foreach digit in the grid.
 		for digit in range(0,len(vector.hSplit)):
 			(h0, h1, h2, h3, h4, h5) = vector.hSplit[digit]
 			(v0, v1, v2, v3, v4, v5) = vector.vSplit[digit]

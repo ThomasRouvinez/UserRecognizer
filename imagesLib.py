@@ -26,7 +26,7 @@ class imagesLib:
 
 	original = None
 	ndarr = None
-	vector = featureVector()
+	vector = None
 	splitsProcessing = splitsLib()
 	presence = []
 	widthArray = []
@@ -66,6 +66,7 @@ class imagesLib:
 		horizontalOffset = 4
 		verticalOffset = 0
 		size = 469
+		self.vector = featureVector()
 		
 		# Attempts to create the new folder.
 		if not os.path.exists(folderName):
@@ -117,6 +118,7 @@ class imagesLib:
 		self.open(path)
 		self.extractFeatures(folderName)
 		self.displayFeatures()
+		return self.vector
 		
 	# Function to automatically crop at the size of the digit.
 	def autoCrop(self, image):
