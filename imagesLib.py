@@ -114,9 +114,9 @@ class imagesLib:
 	# --------------------------------------------------------
 	
 	# Feature extraction WorkFlow.
-	def features(self, path, folderName):
-		self.open(path)
-		self.extractFeatures(folderName)
+	def features(self, user):
+		self.open(user.path)
+		self.extractFeatures(user.target)
 		self.displayFeatures()
 		return self.vector
 		

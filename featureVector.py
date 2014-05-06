@@ -17,10 +17,6 @@ class featureVector:
 	height = []		# Mean digit height.
 	CoG = []		# Center of gravity.
 	
-	# Tables of mean points from splits.
-	hSplit = []		# Horizontal results.
-	vSplit = []		# Vertical results.
-	
 	# Horizontal split features.
 	h1 = [] 		# Angle difference (h0,h1),(h2,h3))
 	h2 = [] 		# Angle difference (h0,h1),(h4,h5))

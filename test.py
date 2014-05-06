@@ -8,15 +8,10 @@
 # Description : test of the image library.
 # --------------------------------------------------------
 
-from imagesLib import *
 import sys
 from pylab import *
-
-# Variables.
-features = []
-extractor = imagesLib()
+from user import *
 
 # Extract features for each user.
-features.append(extractor.features('didier_numbers.png', 'didier'))
-
-# Classification (to be done).
+didier = user('didier', 'didier_numbers.png')
+didier.getFeatures()
