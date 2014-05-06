@@ -10,8 +10,6 @@ from pyneurgen.fitness import FitnessElites, FitnessTournament
 from pyneurgen.fitness import ReplacementTournament
 from pyneurgen.neuralnet import NeuralNet
 
-
-
 bnf =   """
 <model_name>        ::= sample<member_no>.nn
 <max_hnodes>        ::= 40
@@ -151,10 +149,12 @@ def population_gen(population):
         yield item
 
 #   Build the inputs
-for position, target in population_gen(population):
-    all_inputs.append([float(position) / float(pop_len), random.random()])
-    all_targets.append([target])
-
+#for position, target in population_gen(population):
+#	all_inputs.append([float(position) / float(pop_len), random.random()])
+#	all_targets.append([target])
+#	print (float(position)/float(pop_len))
+#	print 'target:', target
+	
 for g in ges.population:
     g.all_inputs = all_inputs
     g.all_targets = all_targets

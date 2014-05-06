@@ -115,6 +115,7 @@ class ImagesLib:
 	def features(self, user):
 		self.open(user.path)
 		self.extractFeatures(user)
+		print
 		
 	# Function to automatically crop at the size of the digit.
 	def autoCrop(self, image):
@@ -151,9 +152,9 @@ class ImagesLib:
 					horizontalSum += i
 					verticalSum += j
 					
-		percentage = (count * 100) / (width * height)			
+		percentage = (count * 100) / (width * height)		
 		vector.presence.append(percentage)
-		vector.CoG.append(((horizontalSum / count), (verticalSum / count)))
+		vector.CoG.append(Point((horizontalSum / count), (verticalSum / count)))
 		
 	# Compute actual presence feature.
 	def clearPresence_CoG(self):
