@@ -13,8 +13,9 @@ from ImagesLib import *
 
 class User:
 
-	def __init__(self, targetName, pathFile):
+	def __init__(self, targetName, pathFile, key):
 		self.target = targetName
+		self.key = key
 		self.path = pathFile
 		self.features = []
 		self.extractor = ImagesLib()

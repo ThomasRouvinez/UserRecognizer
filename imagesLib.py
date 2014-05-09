@@ -72,7 +72,7 @@ class ImagesLib:
 			os.makedirs(user.target)
 			
 		# Splits and stores all samples (pre-processing).
-		print '\n>Processing digits:',
+		print '\n>Processing digits: ', user.target,
 		for x in range (0,10):
 			print '->', x,
 			vector = FeatureVector()
