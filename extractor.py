@@ -32,7 +32,7 @@ usrLoop = True
 
 # Features extraction and NN training.
 print '-' * 75
-mode = raw_input("RETRAIN NEURAL NETWORKS ? (y/n) -> ")
+mode = raw_input(">RETRAIN NEURAL NETWORKS ? (y/n) -> ")
 
 if mode == 'y':
 	# Compute features for all the users.
@@ -59,20 +59,24 @@ if mode == 'y':
 	print '-' * 75
 	print 'PROCESS DONE !'
 	print '-' * 75
+	print
 		
 elif mode == 'n':
-	print 'Loading neural networks...'
+	print '\n>Loading neural networks...'
 	for i in range(0,10):
 		neuralNets.append(brain.openModel('.\NeuralNets\SavedNet_%d' %(i)))
+	print '>>>Neural networks loaded.'
 		
-	print 'Loading users...'
+	print '\n>Loading users...'
 	fileObject = open('.\Users\users','r')
 	temp = pickle.load(fileObject)
 	users = temp
+	print '>>>Users loaded'
 	
 	tmp = sp.call('cls',shell = True)
-	print 'SYSTEM READY:\n'
-		
+	
+	print 'MANUAL SYSTEM READY:\n'
+
 	# Launch testing interface.
 	while(cmdLoop):
 		usrLoop = True
@@ -91,8 +95,8 @@ elif mode == 'n':
 				count += 1
 				if user.target == user_c:
 					chosenUser = user
-					print '>>> User found'
-					print '>>> Activating network...'
+					print '>>>User found'
+					print '>Activating network...'
 					usrLoop = False
 					
 			if count >= len(users):
@@ -105,20 +109,20 @@ elif mode == 'n':
 
 		# Identify closest user.
 		sum = 0.0
-		
-		for factor in recognitions:
-			sum += factor
 			
-		cumulatedScore = sum / len(recognitions)
-		print '>>> AVG Score: ', cumulatedScore
+		meanValue = np.mean(recognitions)
+		print '>>> Mean Score: ', meanValue
+		rounded = round(meanValue)
 		
-		rounded = round(cumulatedScore)
-		print '>>> Rounded', rounded
+		errorLvl = ((meanValue - rounded) * 100) / 0.5
+		if errorLvl < 0:
+			errorLvl = (errorLvl * (-1))
 
 		for user in users:
 			countRec += 1
 			if user.key == rounded:
-				print 'User recognized: ', user.target
+				print '>>> User recognized: ', user.target
+				print '>>> Confidence level: ', (100 - errorLvl), '%'
 				
 		if countRec >= len(users):
 			print '>>> No results, user is not recognized in DB.'
