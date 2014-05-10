@@ -20,6 +20,7 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets import SequentialDataSet
 from pybrain.structure import SigmoidLayer
 from pybrain.structure import LSTMLayer
+import pickle
 		 
 class PyBrain:
 	
@@ -94,9 +95,27 @@ class PyBrain:
 		trainer.trainOnDataset(trndata, 2000)
 		valueA = trainer.testOnData(tstdata)
 		print '\tMSE -> {0:.2f}'.format(valueA)
+		self.saveModel(n, '.\NeuralNets\SavedNet_%d' %(digit))
 		
 		return n
 		
+	# Function to save a model when computed.
+	def saveModel(self, net, path):
+		fileObject = open(path, 'w')
+		pickle.dump(net, fileObject)
+		fileObject.close()
+	
+	# Function to open a previously saved NN.
+	def openModel(self, path):
+		fileObject = open(path,'r')
+		net = pickle.load(fileObject)
+		return net
+	
+	# Function to query the created NN.
+	def recognize(self, neuralNet, digit, user, variation):
+		return neuralNet.activate(self.getSample(user, digit, variation))
+		
+	# Function to get a sample feature vector from the database.
 	def getSample(self, user, digit, variation):
 		data = []
 	
