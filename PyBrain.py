@@ -88,16 +88,12 @@ class PyBrain:
 		n = buildNetwork(24, 30, 1, hiddenclass=LSTMLayer, recurrent=True, bias=True)
 
 		# define a training method
-		trainer = BackpropTrainer(n, dataset = trndata, verbose=False, momentum=0.9, learningrate=0.00001)
+		trainer = BackpropTrainer(n, dataset = trndata, momentum=0.9, learningrate=0.00001)
 
 		# carry out the training
-		valueB = trainer.testOnData(tstdata)
-		print 'MSE before: {0:.2f}'.format(valueB)
 		trainer.trainOnDataset(trndata, 2000)
 		valueA = trainer.testOnData(tstdata)
-		print 'MSE after: {0:.2f}'.format(valueA)
-
-		print n.activate(self.getSample(users[1], 0, 1))
+		print '\tMSE -> {0:.2f}'.format(valueA)
 		
 		return n
 		
