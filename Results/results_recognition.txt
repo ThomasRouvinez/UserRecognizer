@@ -1,0 +1,45 @@
+Results:
+
+# Build the LSTM.
+n = buildNetwork(24, 50, 1, hiddenclass=LSTMLayer, recurrent=True, bias=True)
+
+# define a training method
+trainer = BackpropTrainer(n, dataset = trndata, momentum=0.9, learningrate=0.00002)$
+
+# carry out the training
+trainer.trainOnDataset(trndata, 2000)
+		
+0.15 bias
+
+didier: 	89.9
+sabine: 	66.6
+jerome: 	83.3
+pascal:		66.6
+david: 		56.6	== 72%
+
+0.12 bias
+
+didier:		89.9
+sabine:		66.6
+jerome:		76.6
+pascal:		73.3
+david: 		66.6	== 74.6%
+
+# ---------------------------------------------------------------------------------
+# Tests 2
+# ---------------------------------------------------------------------------------
+# Build the LSTM.
+n = buildNetwork(24, 50, 1, hiddenclass=LSTMLayer, recurrent=True, bias=True)
+
+# define a training method
+trainer = BackpropTrainer(n, dataset = trndata, momentum=0.99, learningrate=0.00002)
+
+# carry out the training
+trainer.trainOnDataset(trndata, 2000)
+
+didier:		99.9
+sabine:		89.9
+jerome:		93.3
+pascal:		99.9
+david: 		93.3	== 95,26%
+

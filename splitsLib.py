@@ -9,6 +9,7 @@
 # ------------------------------------------------------------
 
 from math import atan2, degrees, pi, acos, sqrt
+import numpy as np
 from Point import *
 
 class SplitsLib:
@@ -83,7 +84,13 @@ class SplitsLib:
 		vector0 = [p1.x - p0.x, p1.y - p0.y]
 		vector1 = [p3.x - p2.x, p3.y - p2.y]
 		
-		return degrees(acos(self.getDotProduct(vector0, vector1) / (self.getVectorLength(vector0) * self.getVectorLength(vector1))))
+		vectorLength = (self.getVectorLength(vector0) * self.getVectorLength(vector1))
+		
+		# We clip values going beyond [-1,1].
+		if vectorLength != 0:
+			return degrees(acos(max(min(self.getDotProduct(vector0, vector1), 1), -1) / vectorLength))
+		else:
+			return degrees(acos(0.0))
 	
 	def getDotProduct(self, vector1, vector2):
 		return sum((a*b) for a, b in zip(vector1, vector2))
